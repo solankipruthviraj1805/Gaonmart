@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>GaonMart - 20 Min Delivery</title>
+  <style>
+    :root {
+      --yellow: #f8cb46;
+      --green: #0c831f;
+      --green-dark: #096617;
+      --red: #dc2626;
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #1c1c1c;
+      --muted: #666666;
+      --border: #e8e8e8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body { background: #e9ecf2; color: var(--text); }
+
+    .app-shell {
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg);
+      padding-bottom: 95px;
+      position: relative;
+      box-shadow: 0 0 25px rgba(0,0,0,0.08);
+    }
+
+    .header {
+      background: linear-gradient(180deg, var(--yellow) 0%, #fde28a 100%);
+      padding: 14px 14px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid #ecd06f;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .brand-title { font-size: 20px; font-weight: 800; color: #111; }
+    .brand-title span { color: var(--green); }
+
+    .header-right { display: flex; align-items: center; gap: 6px; }
+
+    .delivery-badge {
+      background: #111;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 20px;
+    }
+
+    .admin-lock-btn {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid #d5b44a;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sub-info { font-size: 12px; color: #333; margin-bottom: 10px; font-weight: 500; }
+
+    .search-box {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .closed-banner {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      margin: 10px 14px 4px;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 14px 8px;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+
+    .cat-pill {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      color: #333;
+    }
+    .cat-pill.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .offer-strip {
+      margin: 4px 14px 10px;
+      background: #e7f6ea;
+      border: 1px dashed var(--green);
+      color: var(--green-dark);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 4px 14px 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card.out-stock { opacity: 0.65; }
+
+    .img-box {
+      height: 86px;
+      background: #f8f9fc;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      margin-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    .discount-tag {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 5px;
+    }
+
+    .p-name { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 3px; }
+    .p-unit { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+
+    .price-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+    .price { font-size: 14px; font-weight: 800; color: #111; }
+    .mrp { font-size: 11px; color: #999; text-decoration: line-through; margin-left: 2px; }
+
+    .add-btn {
+      background: #f2fbf4;
+      color: var(--green);
+      border: 1px solid var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .oos-badge {
+      background: #f1f1f1;
+      color: #777;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 7px;
+      border-radius: 6px;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      background: var(--green);
+      color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .qty-box button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 5px 9px;
+      cursor: pointer;
+    }
+    .qty-box span { font-size: 12px; font-weight: 700; min-width: 16px; text-align: center; }
+
+    .cart-bar {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 456px;
+      background: var(--green);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(12, 131, 31, 0.35);
+      cursor: pointer;
+      z-index: 80;
+    }
+    .cart-bar.show { display: flex; }
+    .cart-bar-left { font-size: 13px; font-weight: 700; }
+    .cart-bar-sub { font-size: 11px; opacity: 0.9; }
+    .cart-bar-right { font-size: 14px; font-weight: 800; }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-bg.center { align-items: center; padding: 16px; }
+
+    .modal-sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 480px;
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 18px 18px 0 0;
+      padding: 16px;
+    }
+    .modal-bg.center .modal-sheet { border-radius: 16px; max-width: 360px; }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .close-btn {
+      background: #f1f1f1;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f2f2f2;
+      font-size: 13px;
+    }
+
+    .bill-box {
+      background: #f8f9fc;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .bill-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .bill-total {
+      font-weight: 800;
+      font-size: 15px;
+      border-top: 1px dashed #ccc;
+      padding-top: 6px;
+      margin-top: 6px;
+      margin-bottom: 0;
+    }
+
+    .free-hint {
+      font-size: 11px;
+      color: var(--green-dark);
+      background: #e7f6ea;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .input-group { margin-bottom: 10px; }
+    .input-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #333; }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .error-msg { color: var(--red); font-size: 12px; font-weight: 600; margin-bottom: 8px; display: none; }
+
+    .wa-btn {
+      width: 100%;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .wa-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .copy-btn {
+      width: 100%;
+      background: #eef2f7;
+      color: #222;
+      border: 1px solid #d5dce6;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .admin-tab {
+      flex: 1;
+      padding: 8px 6px;
+      border: 1px solid var(--border);
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+    .admin-tab.active { background: #111; color: #fff; border-color: #111; }
+
+    .admin-form-box {
+      background: #f8f9fc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .admin-prod-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-prod-info { font-size: 12px; flex: 1; }
+    .mini-btn { border: none; padding: 5px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-blue { background: #dbeafe; color: #1d4ed8; }
+    .btn-red { background: #fee2e2; color: #b91c1c; }
+    .btn-green { background: #dcfce7; color: #15803d; }
+    .btn-gray { background: #f3f4f6; color: #374151; }
+
+    .status-toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 25px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 300;
+      display: none;
+    }
+
+    .empty-state { grid-column: span 2; text-align: center; padding: 35px 15px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="status-toast" id="toast"></div>
+
+<div class="app-shell">
+  <div class="header">
+    <div class="top-row">
+      <div class="brand-title" id="uiShopName">Gaon<span>Mart</span> ⚡</div>
+      <div class="header-right">
+        <div class="delivery-badge">20–25 Min</div>
+        <button class="admin-lock-btn" onclick="openPinModal()" title="Admin Panel">🔐</button>
+      </div>
+    </div>
+    <div class="sub-info" id="uiTiming">📍 Aapke Gaon Mein • Morning 7–9 AM & Evening 4–9 PM</div>
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Saman khojein (Atta, Doodh, Oil, Maggi...)" oninput="renderProducts()" />
+  </div>
+
+  <div class="closed-banner" id="closedBanner">
+    🔴 Abhi Dukaan Band Hai! Kripya dukaan khulne ke samay order karein.
+  </div>
+
+  <div class="categories" id="categoryBar"></div>
+  <div class="offer-strip" id="offerStrip"></div>
+  <div class="grid" id="productGrid"></div>
+
+  <div class="cart-bar" id="cartBar" onclick="openCart()">
+    <div>
+      <div class="cart-bar-left" id="cartCountText">0 Items</div>
+      <div class="cart-bar-sub" id="cartTotalText">₹0</div>
+    </div>
+    <div class="cart-bar-right">Bill Dekhein & Order →</div>
+  </div>
+</div>
+
+<!-- Checkout Modal -->
+<div class="modal-bg" id="cartModal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h3>🛒 Aapka Order Bill</h3>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+
+    <div id="freeHint" class="free-hint"></div>
+    <div id="cartItemsList"></div>
+    <div class="bill-box" id="billBox"></div>
+
+    <div class="input-group">
+      <label>Extra Saman / Special Note (Optional)</label>
+      <input type="text" id="extraNote" placeholder="Jaise: ₹10 ka dhaniya ya thandi cold drink dena" />
+    </div>
+    <div class="input-group">
+      <label>Aapka Naam *</label>
+      <input type="text" id="custName" placeholder="Jaise: Rahul Kumar" />
+    </div>
+    <div class="input-group">
+      <label>Mobile Number *</label>
+      <input type="tel" id="custPhone" placeholder="10 digit mobile number" maxlength="10" />
+    </div>
+    <div class="input-group">
+      <label>Ghar ka Pata / Mohalla / Landmark *</label>
+      <input type="text" id="custAddress" placeholder="Jaise: Shiv Mandir ke paas, Purana Tola" />
+    </div>
+    <div class="input-group">
+      <label>Payment Mode</label>
+      <select id="payMode">
+        <option value="Cash on Delivery">Cash on Delivery (Saman milne par)</option>
+        <option value="UPI on Delivery">UPI / PhonePe Delivery par</option>
+      </select>
+    </div>
+
+    <div class="error-msg" id="errorMsg">Kripya apna Naam, 10 digit Mobile aur Pata bharein!</div>
+
+    <button class="wa-btn" id="waOrderBtn" onclick="sendWhatsAppOrder()">📲 WhatsApp Par Order Bhejein</button>
+    <button class="copy-btn" onclick="copyOrderText()">📋 Bill Copy Karein</button>
+  </div>
+</div>
+
+<!-- Admin PIN Modal -->
+<div class="modal-bg center" id="pinModal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h3>🔐 Admin Login</h3>
+      <button class="close-btn" onclick="closePinModal()">✕</button>
+    </div>
+    <div class="input-group">
+      <label>Admin PIN Daalein (Default: P1234P)</label>
+      <input type="password" id="pinInput" placeholder="PIN" maxlength="10" />
+    </div>
+    <div class="error-msg" id="pinError">Galat PIN! Dobara koshish karein.</div>
+    <button class="wa-btn" onclick="verifyPin()">Unlock Admin Panel</button>
+  </div>
+</div>
+
+<!-- Full Admin Panel Modal -->
+<div class="modal-bg" id="adminModal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h3>⚙️ Admin Control Panel</h3>
+      <button class="close-btn" onclick="closeAdminModal()">✕</button>
+    </div>
+
+    <div class="admin-tabs">
+      <div class="admin-tab active" id="tabBtnProducts" onclick="switchAdminTab('products')">📦 Products</div>
+      <div class="admin-tab" id="tabBtnSettings" onclick="switchAdminTab('settings')">🏪 Settings</div>
+      <div class="admin-tab" id="tabBtnBackup" onclick="switchAdminTab('backup')">☁️ Sync/Reset</div>
+    </div>
+
+    <!-- Tab 1: Products -->
+    <div id="adminTabProducts">
+      <div class="admin-form-box">
+        <h4 id="formTitle" style="margin-bottom:8px;">➕ Naya Product Jodein</h4>
+        <input type="hidden" id="editProdId" />
+        <div class="input-group">
+          <label>Product ka Naam *</label>
+          <input type="text" id="pName" placeholder="Jaise: Aashirvaad Atta" />
+        </div>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Quantity / Unit *</label>
+            <input type="text" id="pUnit" placeholder="Jaise: 5 kg" />
+          </div>
+          <div class="input-group">
+            <label>Category *</label>
+            <input type="text" id="pCat" list="catSuggestions" placeholder="Rashan" />
+            <datalist id="catSuggestions">
+              <option value="Rashan">
+              <option value="Dairy">
+              <option value="Sabzi">
+              <option value="Snacks">
+              <option value="Daily Care">
+              <option value="Fast Food">
+            </datalist>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Aapka Rate (₹) *</label>
+            <input type="number" id="pPrice" placeholder="215" />
+          </div>
+          <div class="input-group">
+            <label>MRP (₹)</label>
+            <input type="number" id="pMrp" placeholder="245" />
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Emoji ya Photo Link (URL)</label>
+          <input type="text" id="pIcon" placeholder="🌾 ya https://... photo link" />
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="wa-btn" style="margin:0; padding:10px;" onclick="saveProduct()">💾 Product Save Karein</button>
+          <button class="copy-btn" style="width:auto; padding:10px 14px;" onclick="resetProdForm()">Clear</button>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom:8px;">📋 Saare Products (<span id="adminProdCount">0</span>)</h4>
+      <div id="adminProdList"></div>
+    </div>
+
+    <!-- Tab 2: Settings -->
+    <div id="adminTabSettings" style="display:none;">
+      <div class="admin-form-box">
+        <div class="input-group">
+          <label>App / Dukaan ka Naam</label>
+          <input type="text" id="setShopName" />
+        </div>
+        <div class="input-group">
+          <label>WhatsApp Number (91 ke saath)</label>
+          <input type="tel" id="setWhatsapp" />
+        </div>
+        <div class="input-group">
+          <label>Delivery Timing Message</label>
+          <input type="text" id="setTiming" />
+        </div>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Free Delivery Limit (₹)</label>
+            <input type="number" id="setFreeAbove" />
+          </div>
+          <div class="input-group">
+            <label>Delivery Charge (₹)</label>
+            <input type="number" id="setDeliveryFee" />
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="input-group">
+            <label>Dukaan Status</label>
+            <select id="setIsOpen">
+              <option value="true">🟢 Open (Orders Chalu)</option>
+              <option value="false">🔴 Closed (Orders Band)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Naya Admin PIN</label>
+            <input type="text" id="setPin" maxlength="10" />
+          </div>
+        </div>
+        <button class="wa-btn" style="margin:0;" onclick="saveSettings()">💾 Settings Save Karein</button>
+      </div>
+    </div>
+
+    <!-- Tab 3: Sync / Reset -->
+    <div id="adminTabBackup" style="display:none;">
+      <div class="admin-form-box">
+        <p style="font-size:12px; line-height:1.5; margin-bottom:10px;" id="cloudStatusText"></p>
+        <button class="wa-btn" onclick="persistAll('Cloud par sync ho gaya!')">☁️ Abhi Cloud Par Save Karein</button>
+        <button class="copy-btn" style="margin-bottom:8px;" onclick="exportData()">📤 Data Copy Karein (Backup JSON)</button>
+        <button class="copy-btn" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;" onclick="resetAllDefaults()">⚠️ Default Saman Wapas Laayein</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CLOUD_DB_URL = "https://goanmart-244c3-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  const DEFAULT_SETTINGS = {
+    shopName: "GaonMart",
+    whatsapp: "919427854406",
+    timing: "📍 Aapke Gaon Mein • Morning 7–9 AM & Evening 4–9 PM",
+    freeAbove: 199,
+    deliveryFee: 15,
+    isOpen: true,
+    adminPin: "1234"
+  };
+
+  const DEFAULT_PRODUCTS = [
+    { id: 1, name: "Aashirvaad Shudh Atta", unit: "5 kg", price: 215, mrp: 245, category: "Rashan", icon: "🌾", inStock: true },
+    { id: 2, name: "Fortune Mustard Oil", unit: "1 Litre", price: 145, mrp: 165, category: "Rashan", icon: "🫗", inStock: true },
+    { id: 3, name: "Desi Chini (Sugar)", unit: "1 kg", price: 46, mrp: 52, category: "Rashan", icon: "🧂", inStock: true },
+    { id: 4, name: "Toor (Arhar) Dal", unit: "1 kg", price: 155, mrp: 175, category: "Rashan", icon: "🥣", inStock: true },
+    { id: 5, name: "Tata Salt", unit: "1 kg", price: 26, mrp: 28, category: "Rashan", icon: "🧂", inStock: true },
+    { id: 6, name: "Tata Tea Premium", unit: "250 g", price: 125, mrp: 140, category: "Rashan", icon: "☕", inStock: true },
+    { id: 7, name: "Fresh Full Cream Doodh", unit: "1 Litre", price: 66, mrp: 68, category: "Dairy", icon: "🥛", inStock: true },
+    { id: 8, name: "Fresh Paneer", unit: "200 g", price: 85, mrp: 95, category: "Dairy", icon: "🧀", inStock: true },
+    { id: 9, name: "Bread Packet", unit: "1 Pack", price: 35, mrp: 40, category: "Dairy", icon: "🍞", inStock: true },
+    { id: 10, name: "Aloo (Potato)", unit: "1 kg", price: 30, mrp: 35, category: "Sabzi", icon: "🥔", inStock: true },
+    { id: 11, name: "Pyaz (Onion)", unit: "1 kg", price: 42, mrp: 50, category: "Sabzi", icon: "🧅", inStock: true },
+    { id: 12, name: "Tamatar (Tomato)", unit: "1 kg", price: 38, mrp: 45, category: "Sabzi", icon: "🍅", inStock: true },
+    { id: 13, name: "Maggi Noodles (Pack of 4)", unit: "280 g", price: 54, mrp: 60, category: "Snacks", icon: "🍜", inStock: true },
+    { id: 14, name: "Coca-Cola / Thums Up", unit: "750 ml", price: 40, mrp: 45, category: "Snacks", icon: "🥤", inStock: true },
+    { id: 15, name: "Parle-G / Biscuit Combo", unit: "Pack", price: 25, mrp: 30, category: "Snacks", icon: "🍪", inStock: true },
+    { id: 16, name: "Lays Chips + Kurkure", unit: "2 Packs", price: 38, mrp: 40, category: "Snacks", icon: "🍟", inStock: true },
+    { id: 17, name: "Lifebuoy / Dettol Soap", unit: "4 Pack", price: 118, mrp: 135, category: "Daily Care", icon: "🧼", inStock: true },
+    { id: 18, name: "Surf Excel Easy Wash", unit: "1 kg", price: 128, mrp: 145, category: "Daily Care", icon: "🧺", inStock: true }
+  ];
+
+  let settings = JSON.parse(localStorage.getItem("gm_settings") || "null") || { ...DEFAULT_SETTINGS };
+  let products = JSON.parse(localStorage.getItem("gm_products") || "null") || [...DEFAULT_PRODUCTS];
+  let cart = JSON.parse(localStorage.getItem("gaonmart_cart") || "{}");
+  let categoriesList = [];
+  let selectedCategory = "Sabhi";
+  let deleteConfirmId = null;
+
+  function esc(str) {
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.innerText = msg;
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 2500);
+  }
+
+  async function persistAll(msg = "Save ho gaya!") {
+    localStorage.setItem("gm_settings", JSON.stringify(settings));
+    localStorage.setItem("gm_products", JSON.stringify(products));
+    renderHeader();
+    renderCategories();
+    renderProducts();
+    updateCartBar();
+
+    if (CLOUD_DB_URL.trim()) {
+      try {
+        const cleanUrl = CLOUD_DB_URL.replace(/\/$/, "");
+        const res = await fetch(`${cleanUrl}/store.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ settings, products })
+        });
+        if (!res.ok) throw new Error("Sync failed");
+        showToast("☁️ Live Cloud par save ho gaya!");
+        return;
+      } catch (e) {
+        showToast("⚠️ Net nahi hai: Sirf is phone par save hua");
+        return;
+      }
+    }
+    showToast("✅ " + msg);
+  }
+
+  async function syncFromCloud() {
+    if (!CLOUD_DB_URL.trim()) return;
+    try {
+      const cleanUrl = CLOUD_DB_URL.replace(/\/$/, "");
+      const res = await fetch(`${cleanUrl}/store.json`);
+      const data = await res.json();
+      if (data && data.products) {
+        products = Array.isArray(data.products) ? data.products : Object.values(data.products);
+        localStorage.setItem("gm_products", JSON.stringify(products));
+      }
+      if (data && data.settings) {
+        settings = { ...DEFAULT_SETTINGS, ...data.settings };
+        localStorage.setItem("gm_settings", JSON.stringify(settings));
+      }
+      renderHeader();
+      renderCategories();
+      renderProducts();
+      updateCartBar();
+    } catch (e) {}
+  }
+
+  window.onload = () => {
+    document.getElementById("custName").value = localStorage.getItem("gm_name") || "";
+    document.getElementById("custPhone").value = localStorage.getItem("gm_phone") || "";
+    document.getElementById("custAddress").value = localStorage.getItem("gm_addr") || "";
+    renderHeader();
+    renderCategories();
+    renderProducts();
+    updateCartBar();
+    syncFromCloud();
+  };
+
+  function renderHeader() {
+    const titleEl = document.getElementById("uiShopName");
+    const sName = settings.shopName || "GaonMart";
+    const mid = Math.ceil(sName.length / 2);
+    titleEl.innerHTML = `${esc(sName.slice(0, mid))}<span>${esc(sName.slice(mid))}</span> ⚡`;
+    document.title = `${sName} - 20 Min Delivery`;
+    document.getElementById("uiTiming").innerText = settings.timing;
+    document.getElementById("offerStrip").innerHTML = `🎉 ₹${settings.freeAbove}+ ke order par <b>FREE Delivery</b> | Cash on Delivery`;
+
+    const closedBanner = document.getElementById("closedBanner");
+    const waBtn = document.getElementById("waOrderBtn");
+    if (!settings.isOpen) {
+      closedBanner.style.display = "block";
+      waBtn.disabled = true;
+      waBtn.innerText = "🔴 Abhi Dukaan Band Hai";
+    } else {
+      closedBanner.style.display = "none";
+      waBtn.disabled = false;
+      waBtn.innerText = "📲 WhatsApp Par Order Bhejein";
+    }
+  }
+
+  function renderCategories() {
+    categoriesList = ["Sabhi", ...new Set(products.map(p => p.category).filter(Boolean))];
+    if (!categoriesList.includes(selectedCategory)) selectedCategory = "Sabhi";
+    document.getElementById("categoryBar").innerHTML = categoriesList.map((c, idx) => `
+      <div class="cat-pill ${c === selectedCategory ? 'active' : ''}" onclick="selectCategory(${idx})">${esc(c)}</div>
+    `).join("");
+  }
+
+  function selectCategory(idx) {
+    selectedCategory = categoriesList[idx] || "Sabhi";
+    renderCategories();
+    renderProducts();
+  }
+
+  function renderIconHtml(icon) {
+    if (icon && (icon.startsWith("http://") || icon.startsWith("https://"))) {
+      return `<img src="${esc(icon)}" alt="item" onerror="this.outerHTML='📦'" />`;
+    }
+    return esc(icon || "📦");
+  }
+
+  function renderProducts() {
+    const query = document.getElementById("searchInput").value.trim().toLowerCase();
+    const grid = document.getElementById("productGrid");
+
+    const filtered = products.filter(p => {
+      const matchCat = selectedCategory === "Sabhi" || p.category === selectedCategory;
+      const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+      return matchCat && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">Koi saman nahi mila 😔</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(p => {
+      const qty = cart[p.id] || 0;
+      const discount = p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
+      const inStock = p.inStock !== false;
+      return `
+        <div class="card ${inStock ? '' : 'out-stock'}">
+          <div>
+            <div class="img-box">
+              ${discount > 0 ? `<span class="discount-tag">${discount}% OFF</span>` : ""}
+              ${renderIconHtml(p.icon)}
+            </div>
+            <div class="p-name">${esc(p.name)}</div>
+            <div class="p-unit">${esc(p.unit)}</div>
+          </div>
+          <div class="price-row">
+            <div>
+              <span class="price">₹${p.price}</span>
+              ${p.mrp > p.price ? `<span class="mrp">₹${p.mrp}</span>` : ""}
+            </div>
+            ${!inStock
+              ? `<span class="oos-badge">Khatam</span>`
+              : qty === 0
+                ? `<button class="add-btn" onclick="changeQty(${p.id}, 1)">+ ADD</button>`
+                : `<div class="qty-box">
+                     <button onclick="changeQty(${p.id}, -1)">−</button>
+                     <span>${qty}</span>
+                     <button onclick="changeQty(${p.id}, 1)">+</button>
+                   </div>`
+            }
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function changeQty(id, delta) {
+    const next = (cart[id] || 0) + delta;
+    if (next <= 0) delete cart[id];
+    else cart[id] = next;
+    localStorage.setItem("gaonmart_cart", JSON.stringify(cart));
+    renderProducts();
+    updateCartBar();
+    if (document.getElementById("cartModal").classList.contains("open")) renderModalContent();
+  }
+
+  function getCartTotals() {
+    let itemsCount = 0, itemTotal = 0;
+    const items = [];
+    for (const [idStr, qty] of Object.entries(cart)) {
+      const prod = products.find(p => p.id === Number(idStr));
+      if (prod && qty > 0 && prod.inStock !== false) {
+        itemsCount += qty;
+        itemTotal += prod.price * qty;
+        items.push({ ...prod, qty });
+      }
+    }
+    const freeAbove = Number(settings.freeAbove) || 0;
+    const fee = Number(settings.deliveryFee) || 0;
+    const delivery = (itemTotal > 0 && itemTotal < freeAbove) ? fee : 0;
+    return { itemsCount, itemTotal, delivery, grandTotal: itemTotal + delivery, items };
+  }
+
+  function updateCartBar() {
+    const { itemsCount, itemTotal } = getCartTotals();
+    const bar = document.getElementById("cartBar");
+    if (itemsCount > 0) {
+      bar.classList.add("show");
+      document.getElementById("cartCountText").innerText = `${itemsCount} Item${itemsCount > 1 ? 's' : ''} Added`;
+      document.getElementById("cartTotalText").innerText = `Total: ₹${itemTotal} + Delivery`;
+    } else {
+      bar.classList.remove("show");
+      closeCart();
+    }
+  }
+
+  function openCart() { renderModalContent(); document.getElementById("cartModal").classList.add("open"); }
+  function closeCart() { document.getElementById("cartModal").classList.remove("open"); }
+
+  function renderModalContent() {
+    const { itemTotal, delivery, grandTotal, items } = getCartTotals();
+    const hint = document.getElementById("freeHint");
+    const freeAbove = Number(settings.freeAbove) || 0;
+
+    hint.innerText = itemTotal < freeAbove
+      ? `💡 ₹${freeAbove - itemTotal} ka saman aur jodein FREE Delivery ke liye!`
+      : `🎉 Badhai ho! Aapko FREE Delivery mil rahi hai!`;
+
+    document.getElementById("cartItemsList").innerHTML = items.map(i => `
+      <div class="cart-item">
+        <div>
+          <b>${esc(i.name)}</b><br>
+          <small style="color:#666">${esc(i.unit)} × ${i.qty}</small>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="qty-box">
+            <button onclick="changeQty(${i.id}, -1)">−</button>
+            <span>${i.qty}</span>
+            <button onclick="changeQty(${i.id}, 1)">+</button>
+          </div>
+          <b>₹${i.price * i.qty}</b>
+        </div>
+      </div>
+    `).join("");
+
+    document.getElementById("billBox").innerHTML = `
+      <div class="bill-row"><span>Saman ka Total</span><span>₹${itemTotal}</span></div>
+      <div class="bill-row"><span>Delivery Charge</span><span>${delivery === 0 ? '<b style="color:#0c831f">FREE</b>' : '₹' + delivery}</span></div>
+      <div class="bill-row bill-total"><span>Total Dena Hai</span><span>₹${grandTotal}</span></div>
+    `;
+  }
+
+  function buildOrderMessage() {
+    const name = document.getElementById("custName").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const address = document.getElementById("custAddress").value.trim();
+    const payMode = document.getElementById("payMode").value;
+    const extraNote = document.getElementById("extraNote").value.trim();
+    const err = document.getElementById("errorMsg");
+
+    if (!name || phone.length < 10 || !address) {
+      err.style.display = "block";
+      return null;
+    }
+    err.style.display = "none";
+    localStorage.setItem("gm_name", name);
+    localStorage.setItem("gm_phone", phone);
+    localStorage.setItem("gm_addr", address);
+
+    const { itemTotal, delivery, grandTotal, items } = getCartTotals();
+    let msg = `🛒 *NAYA ORDER - ${settings.shopName}* ⚡\n--------------------------\n`;
+    items.forEach((i, idx) => { msg += `${idx + 1}. ${i.name} (${i.unit}) × ${i.qty} = ₹${i.price * i.qty}\n`; });
+    if (extraNote) msg += `📝 *Extra Note:* ${extraNote}\n`;
+    msg += `--------------------------\nSaman Total: ₹${itemTotal}\nDelivery: ${delivery === 0 ? 'FREE' : '₹' + delivery}\n*Kul Bill: ₹${grandTotal}*\nPayment: ${payMode}\n\n👤 *Customer Details:*\nNaam: ${name}\nPhone: ${phone}\nPata: ${address}`;
+    return msg;
+  }
+
+  function sendWhatsAppOrder() {
+    if (!settings.isOpen) return;
+    const msg = buildOrderMessage();
+    if (!msg) return;
+    window.open(`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
+  }
+
+  function copyOrderText() {
+    const msg = buildOrderMessage();
+    if (!msg) return;
+    navigator.clipboard.writeText(msg).then(() => showToast("📋 Bill copy ho gaya! WhatsApp par paste karein."));
+  }
+
+  function openPinModal() {
+    document.getElementById("pinInput").value = "";
+    document.getElementById("pinError").style.display = "none";
+    document.getElementById("pinModal").classList.add("open");
+  }
+  function closePinModal() { document.getElementById("pinModal").classList.remove("open"); }
+
+  function verifyPin() {
+    if (document.getElementById("pinInput").value.trim() === String(settings.adminPin)) {
+      closePinModal();
+      openAdminModal();
+    } else {
+      document.getElementById("pinError").style.display = "block";
+    }
+  }
+
+  function openAdminModal() {
+    renderAdminProducts();
+    loadSettingsToForm();
+    document.getElementById("cloudStatusText").innerHTML =
+      `🟢 <b>Live Cloud Sync Active Hai:</b><br>${esc(CLOUD_DB_URL)}<br><br>Jo bhi change karoge, sabke phone par update ho jayega.`;
+    document.getElementById("adminModal").classList.add("open");
+  }
+  function closeAdminModal() { document.getElementById("adminModal").classList.remove("open"); }
+
+  function switchAdminTab(tab) {
+    ["products", "settings", "backup"].forEach(t => {
+      document.getElementById("adminTab" + t.charAt(0).toUpperCase() + t.slice(1)).style.display = (t === tab) ? "block" : "none";
+      document.getElementById("tabBtn" + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle("active", t === tab);
+    });
+  }
+
+  function renderAdminProducts() {
+    document.getElementById("adminProdCount").innerText = products.length;
+    document.getElementById("adminProdList").innerHTML = products.map(p => `
+      <div class="admin-prod-card">
+        <div class="admin-prod-info">
+          <b>${esc(p.name)}</b> (${esc(p.unit)})<br>
+          <span style="color:#0c831f; font-weight:700;">₹${p.price}</span>
+          <span style="color:#888; text-decoration:line-through;">₹${p.mrp}</span>
+          • ${esc(p.category)}
+        </div>
+        <div style="display:flex; gap:4px;">
+          <button class="mini-btn ${p.inStock !== false ? 'btn-green' : 'btn-gray'}" onclick="toggleStock(${p.id})">
+            ${p.inStock !== false ? 'In Stock' : 'Khatam'}
+          </button>
+          <button class="mini-btn btn-blue" onclick="editProduct(${p.id})">Edit</button>
+          <button class="mini-btn btn-red" onclick="deleteProduct(${p.id})">
+            ${deleteConfirmId === p.id ? 'Sure?' : 'Del'}
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function saveProduct() {
+    const editId = document.getElementById("editProdId").value;
+    const name = document.getElementById("pName").value.trim();
+    const unit = document.getElementById("pUnit").value.trim();
+    const category = document.getElementById("pCat").value.trim() || "Rashan";
+    const price = Number(document.getElementById("pPrice").value);
+    const mrp = Number(document.getElementById("pMrp").value) || price;
+    const icon = document.getElementById("pIcon").value.trim() || "📦";
+
+    if (!name || !unit || !price || price <= 0) {
+      showToast("⚠️ Naam, Unit aur sahi Rate bharein!");
+      return;
+    }
+
+    if (editId) {
+      const idx = products.findIndex(p => p.id === Number(editId));
+      if (idx !== -1) products[idx] = { ...products[idx], name, unit, category, price, mrp, icon };
+      resetProdForm();
+      persistAll("Product update ho gaya!");
+    } else {
+      products.unshift({ id: Date.now(), name, unit, category, price, mrp, icon, inStock: true });
+      resetProdForm();
+      persistAll("Naya product add ho gaya!");
+    }
+    renderAdminProducts();
+  }
+
+  function editProduct(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById("editProdId").value = p.id;
+    document.getElementById("formTitle").innerText = "✏️ Product Edit Karein";
+    document.getElementById("pName").value = p.name;
+    document.getElementById("pUnit").value = p.unit;
+    document.getElementById("pCat").value = p.category;
+    document.getElementById("pPrice").value = p.price;
+    document.getElementById("pMrp").value = p.mrp;
+    document.getElementById("pIcon").value = p.icon;
+    document.getElementById("adminModal").querySelector(".modal-sheet").scrollTop = 0;
+  }
+
+  function resetProdForm() {
+    document.getElementById("editProdId").value = "";
+    document.getElementById("formTitle").innerText = "➕ Naya Product Jodein";
+    ["pName", "pUnit", "pCat", "pPrice", "pMrp", "pIcon"].forEach(id => document.getElementById(id).value = "");
+  }
+
+  function toggleStock(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    p.inStock = (p.inStock === false) ? true : false;
+    persistAll(p.inStock ? "Stock chalu kiya!" : "Out of stock kiya!");
+    renderAdminProducts();
+  }
+
+  function deleteProduct(id) {
+    if (deleteConfirmId !== id) {
+      deleteConfirmId = id;
+      renderAdminProducts();
+      setTimeout(() => { if (deleteConfirmId === id) { deleteConfirmId = null; renderAdminProducts(); } }, 3000);
+      return;
+    }
+    deleteConfirmId = null;
+    products = products.filter(p => p.id !== id);
+    delete cart[id];
+    localStorage.setItem("gaonmart_cart", JSON.stringify(cart));
+    persistAll("Product delete ho gaya!");
+    renderAdminProducts();
+  }
+
+  function loadSettingsToForm() {
+    document.getElementById("setShopName").value = settings.shopName;
+    document.getElementById("setWhatsapp").value = settings.whatsapp;
+    document.getElementById("setTiming").value = settings.timing;
+    document.getElementById("setFreeAbove").value = settings.freeAbove;
+    document.getElementById("setDeliveryFee").value = settings.deliveryFee;
+    document.getElementById("setIsOpen").value = String(settings.isOpen);
+    document.getElementById("setPin").value = settings.adminPin;
+  }
+
+  function saveSettings() {
+    settings.shopName = document.getElementById("setShopName").value.trim() || "GaonMart";
+    settings.whatsapp = document.getElementById("setWhatsapp").value.trim() || "919427854406";
+    settings.timing = document.getElementById("setTiming").value.trim();
+    settings.freeAbove = Number(document.getElementById("setFreeAbove").value) || 0;
+    settings.deliveryFee = Number(document.getElementById("setDeliveryFee").value) || 0;
+    settings.isOpen = document.getElementById("setIsOpen").value === "true";
+    settings.adminPin = document.getElementById("setPin").value.trim() || "1234";
+    persistAll("Settings save ho gayi!");
+  }
+
+  function exportData() {
+    navigator.clipboard.writeText(JSON.stringify({ settings, products }, null, 2))
+      .then(() => showToast("📤 Poora data copy ho gaya!"));
+  }
+
+  function resetAllDefaults() {
+    products = [...DEFAULT_PRODUCTS];
+    settings = { ...DEFAULT_SETTINGS };
+    cart = {};
+    localStorage.removeItem("gaonmart_cart");
+    persistAll("Sab kuch default par reset ho gaya!");
+    renderAdminProducts();
+    loadSettingsToForm();
+  }
+</script>
+</body>
+  </html>
